@@ -6,7 +6,7 @@ var tagDao = require('../DAOs/TagDao')
  */
 router.get('/gettaglists', (req, res, next) => {
   console.log('获取标签列表')
-  tagDao.getAllTags(res)
+  tagDao.getAllTags(req,res)
 })
 router.post('/inserttag', (req, res, next) => {
   console.log('新增标签')

@@ -6,7 +6,7 @@ var sortDao = require('../DAOs/SortDao')
  */
 router.get('/getsortlists', (req, res, next) => {
   console.log('获取分类列表')
-  sortDao.getAllSorts(res)
+  sortDao.getAllSorts(req,res)
 })
 router.post('/insertsort', (req, res, next) => {
   console.log('新增分类')

@@ -31,8 +31,12 @@ function insertTag(tag, res) {
  * 获取所有标签列表
  *@return Array
  */
-function getAllTags(res) {
-  Tag.findAll()
+function getAllTags (req, res) {
+  let count = parseInt(req.query.count)
+  let currentPage = parseInt(req.query.page)
+  console.log(req.query);
+  if (!req.query.count) {
+     Tag.findAll()
     .then((data) => {
       console.log(JSON.stringify(data))
       console.log('then')
@@ -54,6 +58,35 @@ function getAllTags(res) {
         }
       })
     })
+  } else {
+    Tag.findAll(
+      {
+        limit: count,
+        offset:(currentPage-1)*count
+      }
+     )
+    .then((data) => {
+      console.log(JSON.stringify(data))
+      console.log('then')
+      res.send({
+        data: JSON.stringify(data),
+        meta: {
+          status: 200,
+          msg: '获取成功'
+        }
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+      res.send({
+        data: '',
+        meta: {
+          status: 500,
+          msg: '获取失败'
+        }
+      })
+    })
+  }
 }
 /**
  * 删除标签

@@ -14,13 +14,14 @@ var visitorRouter = require('./routes/visitor')
 var replyRouter = require('./routes/reply')
 var adminRouter = require('./routes/admin')
 var uploadRouter = require('./routes/upload')
+var aboutInfoRouter = require('./routes/aboutInfo')
 var app = express()
 // 解决跨域
 app.all('*', function (request, response, next) {
   response.header('Access-Control-Allow-Origin', '*')
   response.header(
     'Access-Control-Allow-Headers',
-    'X-Requested-With,Content-Type, Accept, Authorization'
+    'X-Requested-With,Content-Type, Accept, Authorization,token'
   )
   response.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
   response.header('X-Powered-By', '3.2.1')
@@ -46,6 +47,7 @@ app.use('/comment', commentRouter)
 app.use('/visitor', visitorRouter)
 app.use('/reply', replyRouter)
 app.use('/admin', adminRouter)
+app.use('/aboutinfo',aboutInfoRouter)
 app.get('/uploads/*', (req, res) => {
   console.log(__dirname + '/' + req.url)
   fs.readFile(__dirname + '/' + req.url, (err, data) => {

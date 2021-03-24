@@ -8,6 +8,12 @@ const sequelize = new Sequelize(
     host: database.host,
     timezone: database.timezone,
     dialect: 'mysql',
+    dialectOptions: {
+         charset: "utf8mb4",
+         collate: "utf8mb4_unicode_ci",
+         supportBigNumbers: true,
+         bigNumberStrings: true
+    },
     logging: console.log // 默认值,显示日志函数调用的第一个参数
   }
 )

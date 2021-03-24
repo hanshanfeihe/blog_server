@@ -14,8 +14,11 @@ const Reply = require('../models/reply')
 //   status: 1
 // })
 //获取所有数据
-function findArticle(res) {
-  Article.findAll({
+function findArticle (req,res) {
+   let count = parseInt(req.query.count)
+  let currentPage = parseInt(req.query.page)
+  if (count) {
+    Article.findAll({
     include: [
       { model: Sort, attributes: ['sort_name'] },
       { model: Tag, attributes: ['tag_id', 'tag_name'] },
@@ -23,7 +26,77 @@ function findArticle(res) {
         model: Comment,
         attributes: ['content', 'createdAt']
       }
-    ]
+      ],
+       limit:count,
+       offset:(currentPage-1)*count
+  })
+    .then((article) => {
+      console.log(JSON.stringify(article))
+      res.send({
+        data: JSON.stringify(article),
+        meta: {
+          status: 200,
+          msg: '获取成功'
+        }
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+      res.send({
+        data: '',
+        meta: {
+          status: 500,
+          msg: '获取失败'
+        }
+      })
+    })
+  } else {
+     Article.findAll({
+    include: [
+      { model: Sort, attributes: ['sort_name'] },
+      { model: Tag, attributes: ['tag_id', 'tag_name'] },
+      {
+        model: Comment,
+        attributes: ['content', 'createdAt']
+      }
+      ],
+  })
+    .then((article) => {
+      console.log(JSON.stringify(article))
+      res.send({
+        data: JSON.stringify(article),
+        meta: {
+          status: 200,
+          msg: '获取成功'
+        }
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+      res.send({
+        data: '',
+        meta: {
+          status: 500,
+          msg: '获取失败'
+        }
+      })
+    })
+  }
+ 
+}
+// 获取最新文章 5篇
+function getNewArticle (req, res) {
+  Article.findAll({
+    attributes:['id','title','create_time'],
+    include: [
+      { model: Sort, attributes: ['sort_name'] },
+      { model: Tag, attributes: ['tag_id', 'tag_name'] },
+      {
+        model: Comment,
+        attributes: ['content', 'createdAt']
+      }
+    ],
+    order: ['create_time'],
   })
     .then((article) => {
       console.log(JSON.stringify(article))
@@ -168,45 +241,44 @@ function findArticleById(id, res) {
  * 更新文章
  * @params article
  */
-async function updateArticle(articleForm, res) {
-  const article = await Article.findOne({
+function updateArticle (articleForm, res) {
+  console.log(articleForm);
+   Article.findOne({
     where: {
       id: articleForm.id
     }
-  })
-  article.update(articleForm)
-  if (articleForm.selectTagIds && articleForm.selectTagIds.length) {
-    console.log(articleForm.selectTagIds)
-    let tags = await Tag.findAll({
-      where: {
-        tag_id: articleForm.selectTagIds
-      }
-    })
-    console.log(JSON.stringify(tags))
-    article
-      .setTags(tags)
-      .then((data) => {
-        res.send({
+   }).then(article => {
+    //  article.update(articleForm)
+       Tag.findAll({
+         where: {
+           tag_id: articleForm.selectTagIds
+         }
+       }).then(tags => {
+         console.log(tags);
+         article.setTags(tags).then(data => {
+           console.log(data);
+           res.send({
           data: {},
           meta: {
             msg: '更新成功',
             status: 200
           }
         })
-      })
-      .catch((error) => {
-        res.send({
+         })
+       }).catch(error => {
+          res.send({
           data: {},
           meta: {
             mag: '更新失败',
             status: 200
           }
         })
+       })
       })
   }
-}
 module.exports = {
   findArticle,
+  getNewArticle,
   insertArticle,
   deleteArticle,
   findArticleById,

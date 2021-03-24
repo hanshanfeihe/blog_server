@@ -25,6 +25,7 @@ function checkToken(req, res, next) {
     return
   }
   const t = jwt.decode(token, 'xykzzt') //存在token,进行解密
+  console.log(t);
   //解密失败
   if (!t) {
     res.send({
@@ -44,7 +45,9 @@ function checkToken(req, res, next) {
   })
     .then((r) => {
       req.TOKEN_ADMIN = r
+      console.log(t);
       next()
+      return 
     })
     .catch((error) => {
       res.send({

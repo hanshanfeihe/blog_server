@@ -33,13 +33,17 @@ function insertSort(sort, res) {
  * 获取所有分类列表
  *@return Array
  */
-function getAllSorts(res) {
-  Sort.findAll({
+function getAllSorts (req, res) {
+  console.log(req.query);
+  let count = parseInt(req.query.count)
+  let currentPage = parseInt(req.query.page)
+  if (!req.query.count) {
+     Sort.findAll({
     include: [
       {
         model: Article
-      }
-    ]
+      },
+    ],
   })
     .then((data) => {
       console.log(JSON.stringify(data))
@@ -61,6 +65,37 @@ function getAllSorts(res) {
         }
       })
     })
+  } else {
+     Sort.findAll({
+    include: [
+      {
+        model: Article
+         },
+       ],
+       limit:count,
+       offset:(currentPage-1)*count
+  })
+    .then((data) => {
+      console.log(JSON.stringify(data))
+      res.send({
+        data: JSON.stringify(data),
+        meta: {
+          status: 200,
+          msg: '获取成功'
+        }
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+      res.send({
+        data: '',
+        meta: {
+          status: 500,
+          msg: '获取失败'
+        }
+      })
+    })
+  }
 }
 /**
  * 删除分类
