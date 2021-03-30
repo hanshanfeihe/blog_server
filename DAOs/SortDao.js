@@ -1,4 +1,4 @@
-const { Sequelize } = require('../db')
+const { Sequelize, model } = require('../db')
 const Sort = require('../models/sort')
 const { Op } = require('sequelize')
 const Article = require('../models/article')
@@ -38,13 +38,13 @@ function getAllSorts (req, res) {
   let count = parseInt(req.query.count)
   let currentPage = parseInt(req.query.page)
   if (!req.query.count) {
-     Sort.findAll({
-    include: [
+    Sort.findAll(
       {
-        model: Article
-      },
-    ],
-  })
+        include: [
+          {model:Article,attributes:['title']}
+        ]
+      }
+     )
     .then((data) => {
       console.log(JSON.stringify(data))
       res.send({
@@ -66,12 +66,10 @@ function getAllSorts (req, res) {
       })
     })
   } else {
-     Sort.findAll({
-    include: [
-      {
-        model: Article
-         },
-       ],
+    Sort.findAll({
+       include: [
+          {model:Article,attributes:['title']}
+        ],
        limit:count,
        offset:(currentPage-1)*count
   })

@@ -4,6 +4,7 @@ const moment = require('moment')
 const ArticleTag = require('./acticleTag')
 const Comment = require('./comment')
 const Tag = require('./tag')
+const { options } = require('./reply')
 class Article extends Model {}
 Article.init(
   {

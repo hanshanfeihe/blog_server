@@ -5,6 +5,9 @@ const Tag = require('../models/tag')
 const Comment = require('../models/comment')
 const Visitor = require('../models/visitor')
 const Reply = require('../models/reply')
+const { Sequelize } = require('../db')
+const { Op } = require('sequelize')
+const { create, sequelize } = require('../models/reply')
 // //创建实例
 // const article = Article.build({
 //   // id: 1001,
@@ -90,13 +93,9 @@ function getNewArticle (req, res) {
     attributes:['id','title','create_time'],
     include: [
       { model: Sort, attributes: ['sort_name'] },
-      { model: Tag, attributes: ['tag_id', 'tag_name'] },
-      {
-        model: Comment,
-        attributes: ['content', 'createdAt']
-      }
     ],
     order: ['create_time'],
+    limit:5
   })
     .then((article) => {
       console.log(JSON.stringify(article))
@@ -118,6 +117,148 @@ function getNewArticle (req, res) {
         }
       })
     })
+}
+//获取日期分类
+function getYearMonth (res) {
+  console.log('测试');
+  Article.findAll(
+    {
+      group: [Sequelize.fn('date_format',Sequelize.col('Article.create_time'),'%y-%m')],
+      attributes: [[Sequelize.fn('date_format', Sequelize.col('Article.create_time'), '%Y-%m'), 'date']],
+    }
+  ).then(date => {
+    res.send(
+      {
+        data: JSON.stringify(date),
+        meta: {
+          status: 200,
+          msg:'获取日期分类成功'
+        }
+     }
+    )
+  }).catch(error => {
+    console.log(error);
+    res.send(
+      {
+        data: null,
+        meta: {
+          status: 500,
+          msg: '获取日期分类失败'
+        }
+      }
+    )
+  }
+  )
+}
+//根据年-月获取文章
+function getDateArticle (req, res) {
+  console.log(req.query.date);
+  sequelize.query(
+    "select id,title,create_time from article as Article where date_format(create_time,'%Y-%m') = ?",
+    {
+        type: Sequelize.QueryTypes.SELECT, //指定查询类型
+      replacements:[req.query.date]
+    }
+  ).then(data => {
+    console.log(JSON.stringify(data));
+    res.send({
+      data: data,
+      meta: {
+        status: 200,
+        msg:'获取成功'
+      }
+    })
+  }).catch(
+    error => {
+      console.log(error);
+       res.send({
+      data: null,
+      meta: {
+        status: 500,
+        msg:'获取失败'
+      }
+    })
+    }
+  )
+}
+//分类获取文章
+function findSortArticle (req, res) {
+  console.log(req.query);
+   let count = parseInt(req.query.count)
+  let currentPage = parseInt(req.query.page)
+  if (count) {
+    Article.findAndCountAll({
+      where: {
+        SortSortId:req.query.sort_id
+    },
+    include: [
+      { model: Sort, attributes: ['sort_name'] },
+      { model: Tag, attributes: ['tag_id', 'tag_name'] },
+      {
+        model: Comment,
+        attributes: ['content', 'createdAt']
+      }
+      ],
+       limit:count,
+       offset:(currentPage-1)*count
+  })
+    .then((article) => {
+      console.log(JSON.stringify(article))
+      res.send({
+        data: JSON.stringify(article),
+        meta: {
+          status: 200,
+          msg: '获取成功'
+        }
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+      res.send({
+        data: '',
+        meta: {
+          status: 500,
+          msg: '获取失败'
+        }
+      })
+    })
+  } else {
+    Article.findAndCountAll({
+        where: {
+        SortSortId:req.query.sort_id
+    },
+    include: [
+      { model: Sort, attributes: ['sort_name'] },
+      {
+        model: Tag, attributes: ['tag_id', 'tag_name'] },
+      {
+        model: Comment,
+        attributes: ['content', 'createdAt']
+      }
+      ],
+  })
+    .then((article) => {
+      console.log(JSON.stringify(article))
+      res.send({
+        data: article,
+        meta: {
+          status: 200,
+          msg: '获取成功'
+        }
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+      res.send({
+        data: '',
+        meta: {
+          status: 500,
+          msg: '获取失败'
+        }
+      })
+    })
+  }
+ 
 }
 //新增文章
 function insertArticle(article, res) {
@@ -185,10 +326,91 @@ function deleteArticle(id, res) {
     })
 }
 /**
+ * 按标签查找文章
+ */
+function gettagarticle (req, res) {
+  console.log(req.query);
+   let count = parseInt(req.query.count)
+  let currentPage = parseInt(req.query.page)
+  if (count) {
+    Article.findAndCountAll({
+    include: [
+      { model: Sort, attributes: ['sort_name'] },
+      {
+        model: Tag, attributes: ['tag_id', 'tag_name'], where: {
+        tag_name:req.query.tag_name
+      } },
+      {
+        model: Comment,
+        attributes: ['content', 'createdAt']
+      }
+      ],
+       limit:count,
+       offset:(currentPage-1)*count
+  })
+    .then((article) => {
+      console.log(JSON.stringify(article))
+      res.send({
+        data: JSON.stringify(article),
+        meta: {
+          status: 200,
+          msg: '获取成功'
+        }
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+      res.send({
+        data: '',
+        meta: {
+          status: 500,
+          msg: '获取失败'
+        }
+      })
+    })
+  } else {
+    Article.findAndCountAll({
+    include: [
+      { model: Sort, attributes: ['sort_name'] },
+      {
+        model: Tag, attributes: ['tag_id', 'tag_name'],where: {
+        tag_name:req.query.tag_name
+      }  },
+      {
+        model: Comment,
+        attributes: ['content', 'createdAt']
+      }
+      ],
+  })
+    .then((article) => {
+      console.log(JSON.stringify(article))
+      res.send({
+        data: article,
+        meta: {
+          status: 200,
+          msg: '获取成功'
+        }
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+      res.send({
+        data: '',
+        meta: {
+          status: 500,
+          msg: '获取失败'
+        }
+      })
+    })
+  }
+
+}
+
+/**
  * 查找文章
  * @params id
  */
-function findArticleById(id, res) {
+  function findArticleById(id, res) {
   console.log(id)
   Article.findOne({
     where: {
@@ -248,7 +470,7 @@ function updateArticle (articleForm, res) {
       id: articleForm.id
     }
    }).then(article => {
-    //  article.update(articleForm)
+     article.update(articleForm)
        Tag.findAll({
          where: {
            tag_id: articleForm.selectTagIds
@@ -275,12 +497,17 @@ function updateArticle (articleForm, res) {
         })
        })
       })
-  }
+}
+
 module.exports = {
   findArticle,
   getNewArticle,
   insertArticle,
   deleteArticle,
   findArticleById,
-  updateArticle
+  updateArticle,
+  findSortArticle,
+  gettagarticle,
+  getYearMonth,
+  getDateArticle
 }

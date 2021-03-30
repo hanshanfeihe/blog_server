@@ -13,6 +13,7 @@ function setToken(admin) {
  */
 function checkToken(req, res, next) {
   const token = req.headers.token //获取请求头携带过来的token值
+  console.log(token);
   //如果token不存在
   if (!token) {
     res.send({
