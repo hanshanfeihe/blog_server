@@ -18,6 +18,22 @@ Admin.init(
       type: DataTypes.STRING,
       allowNull: false
     },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    git: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    weibo: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    avatar: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     createdAt: {
       type: DataTypes.DATE,
       get() {
