@@ -2,8 +2,25 @@ const Visitor = require('../models/visitor')
 /**
  * 新增游客
  */
-function insertVisitor(visitor, res) {
-  Visitor.create(visitor)
+function insertVisitor (visitor, res) {
+  Visitor.findOne({
+    where: {
+      email:visitor.email
+    }
+  }).then(v => {
+    console.log(JSON.stringify(v));
+    if (v.email) {
+      res.send(
+        {
+          data: v,
+           meta: {
+          status: 200,
+          msg: '新增成功'
+        }
+        }
+      )
+    } else {
+       Visitor.create(visitor)
     .then((data) => {
       console.log(JSON.stringify(data))
       res.send({
@@ -24,6 +41,17 @@ function insertVisitor(visitor, res) {
         }
       })
     })
+    }
+  }).catch(error=>{
+    console.log(error);
+     res.send({
+        data: {},
+        meta: {
+          status: 500,
+          msg: '新增失败'
+        }
+      })
+  })
 }
 /**
  * 获取游客信息

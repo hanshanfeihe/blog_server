@@ -188,24 +188,29 @@ function findSortArticle (req, res) {
   let currentPage = parseInt(req.query.page)
   if (count) {
     Article.findAndCountAll({
+      limit:count,
+       offset:(currentPage-1)*count,
       where: {
-        SortSortId:req.query.sort_id
-    },
-    include: [
-      { model: Sort, attributes: ['sort_name'] },
+        SortSortId: req.query.sort_id
+      },
+      distinct: true,
+      include: [
+      {
+        model: Sort, attributes: ['sort_name'], where: {
+        sort_id:req.query.sort_id
+      } },
       { model: Tag, attributes: ['tag_id', 'tag_name'] },
       {
         model: Comment,
         attributes: ['content', 'createdAt']
       }
       ],
-       limit:count,
-       offset:(currentPage-1)*count
+  
   })
     .then((article) => {
       console.log(JSON.stringify(article))
       res.send({
-        data: JSON.stringify(article),
+        data:article,
         meta: {
           status: 200,
           msg: '获取成功'

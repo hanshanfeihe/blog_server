@@ -1,4 +1,6 @@
 const Comment = require('../models/comment')
+const Reply = require('../models/reply')
+const Visitor = require('../models/visitor')
 /**
  * 新增评论
  * @param Object comment,
@@ -33,6 +35,48 @@ function insertComment(comment, res) {
       })
     })
 }
+/**
+ * 获取评论
+ */
+function getComment (res) {
+  Comment.findAndCountAll(
+    {
+      where: {
+        ArticleId: null,
+      },
+       include: [
+          {
+            model: Visitor
+          },
+          {
+            model: Reply,
+            include: [
+              { model: Visitor, as: 'from' },
+              { model: Visitor, as: 'to' }
+              // where:''
+            ]
+          }
+      ]
+    }
+  ).then(data => {
+    res.send({
+      data: data,
+      meta: {
+        msg: '获取成功',
+        status:200
+      }
+    })
+  }).catch(error => {
+    res.send({
+      data: null,
+      meta: {
+        msg: '获取失败',
+        status:500
+      }
+    })
+  })
+}
 module.exports = {
-  insertComment
+  insertComment,
+  getComment
 }
