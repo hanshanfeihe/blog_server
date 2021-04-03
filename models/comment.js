@@ -15,11 +15,11 @@ Comment.init(
       unique: true
     },
     content: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false
     },
     adminComment: {
-      type: DataTypes.STRING
+      type: DataTypes.TEXT
     },
     parentCommentId: {
       type: DataTypes.INTEGER

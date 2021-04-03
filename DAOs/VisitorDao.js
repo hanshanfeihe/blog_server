@@ -9,7 +9,7 @@ function insertVisitor (visitor, res) {
     }
   }).then(v => {
     console.log(JSON.stringify(v));
-    if (v.email) {
+    if (v!==null) {
       res.send(
         {
           data: v,
