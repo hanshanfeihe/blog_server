@@ -3,6 +3,7 @@ const sequelize = require('../db')
 const moment = require('moment')
 const Comment = require('../models/comment')
 const Reply = require('../models/reply')
+const Comments = require('./comments')
 class Visitor extends Model {}
 Visitor.init(
   {
@@ -47,6 +48,8 @@ Visitor.init(
     // timestamps: false //禁用此模型自动生成时间
   }
 )
+Visitor.hasMany(Comments, { foreignKey: 'v_id' })
+Comments.belongsTo(Visitor,{foreignKey:'v_id'})
 Visitor.hasMany(Comment)
 Comment.belongsTo(Visitor)
 Visitor.hasMany(Reply, {
@@ -56,6 +59,10 @@ Visitor.hasMany(Reply, { foreignKey: 'to_id' })
 Reply.belongsTo(Visitor, {
   foreignKey: 'to_id',
   as: 'to'
+})
+Comments.belongsTo(Visitor, {
+  foreignKey: 'to_id',
+  as:'to'
 })
 Reply.belongsTo(Visitor, {
   foreignKey: 'from_id',

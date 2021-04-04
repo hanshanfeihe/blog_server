@@ -38,8 +38,11 @@ function insertComment(comment, res) {
 /**
  * 获取评论
  */
-function getComment (res) {
-  Comment.findAndCountAll(
+function getComment (req,res) {
+    let count = parseInt(req.query.count)
+  let currentPage = parseInt(req.query.page)
+  if (count) {
+     Comment.findAndCountAll(
     {
       where: {
         ArticleId: null,
@@ -47,7 +50,10 @@ function getComment (res) {
        include: [
           {
             model: Visitor
-          },
+         },
+         {
+          model:Article
+         },
           {
             model: Reply,
             include: [
@@ -56,7 +62,9 @@ function getComment (res) {
               // where:''
             ]
           }
-      ]
+         ],
+         limit:count,
+       offset:(currentPage-1)*count
     }
   ).then(data => {
     res.send({
@@ -75,8 +83,210 @@ function getComment (res) {
       }
     })
   })
+  } else {
+      Comment.findAndCountAll(
+    {
+      where: {
+        ArticleId: null,
+      },
+       include: [
+          {
+            model: Visitor
+          },
+          {
+            model: Reply,
+            include: [
+              { model: Visitor, as: 'from' },
+              { model: Visitor, as: 'to' }
+              // where:''
+            ]
+          }
+         ],
+    }
+  ).then(data => {
+    res.send({
+      data: data,
+      meta: {
+        msg: '获取成功',
+        status:200
+      }
+    })
+  }).catch(error => {
+    res.send({
+      data: null,
+      meta: {
+        msg: '获取失败',
+        status:500
+      }
+    })
+  })
+  }
+}
+/**
+ * 获取分类评论
+ */
+function getSortComment (req, res) {
+    let count = parseInt(req.query.count)
+  let currentPage = parseInt(req.query.page)
+  if (count) {
+     Comment.findAndCountAll(
+    {
+      where: {
+        ArticleId: req.articleId
+      },
+       include: [
+          {
+            model: Visitor
+          },
+          {
+            model: Reply,
+            include: [
+              { model: Visitor, as: 'from' },
+              { model: Visitor, as: 'to' }
+              // where:''
+            ]
+          }
+         ],
+         limit:count,
+       offset:(currentPage-1)*count
+    }
+  ).then(data => {
+    res.send({
+      data: data,
+      meta: {
+        msg: '获取成功',
+        status:200
+      }
+    })
+  }).catch(error => {
+    res.send({
+      data: null,
+      meta: {
+        msg: '获取失败',
+        status:500
+      }
+    })
+  })
+  } else {
+      Comment.findAndCountAll(
+    {
+      where: {
+        ArticleId: req.articleId,
+      },
+       include: [
+          {
+            model: Visitor
+          },
+          {
+            model: Reply,
+            include: [
+              { model: Visitor, as: 'from' },
+              { model: Visitor, as: 'to' }
+              // where:''
+            ]
+          }
+         ],
+    }
+  ).then(data => {
+    res.send({
+      data: data,
+      meta: {
+        msg: '获取成功',
+        status:200
+      }
+    })
+  }).catch(error => {
+    res.send({
+      data: null,
+      meta: {
+        msg: '获取失败',
+        status:500
+      }
+    })
+  })
+  }
+}
+/**
+ * 获取所有评论
+ */
+function getAllComment (req, res) {
+    let count = parseInt(req.query.count)
+  let currentPage = parseInt(req.query.page)
+  if (count) {
+     Comment.findAndCountAll(
+    {
+       include: [
+          {
+            model: Visitor
+          },
+          {
+            model: Reply,
+            include: [
+              { model: Visitor, as: 'from' },
+              { model: Visitor, as: 'to' }
+              // where:''
+            ]
+          }
+         ],
+         limit:count,
+       offset:(currentPage-1)*count
+    }
+  ).then(data => {
+    res.send({
+      data: data,
+      meta: {
+        msg: '获取成功',
+        status:200
+      }
+    })
+  }).catch(error => {
+    res.send({
+      data: null,
+      meta: {
+        msg: '获取失败',
+        status:500
+      }
+    })
+  })
+  } else {
+      Comment.findAndCountAll(
+    {
+       include: [
+          {
+            model: Visitor
+          },
+          {
+            model: Reply,
+            include: [
+              { model: Visitor, as: 'from' },
+              { model: Visitor, as: 'to' }
+              // where:''
+            ]
+          }
+         ],
+    }
+  ).then(data => {
+    res.send({
+      data: data,
+      meta: {
+        msg: '获取成功',
+        status:200
+      }
+    })
+  }).catch(error => {
+    res.send({
+      data: null,
+      meta: {
+        msg: '获取失败',
+        status:500
+      }
+    })
+  })
+  }
 }
 module.exports = {
   insertComment,
-  getComment
+  getComment,
+  getSortComment,
+  getAllComment
 }

@@ -5,6 +5,7 @@ const ArticleTag = require('./acticleTag')
 const Comment = require('./comment')
 const Tag = require('./tag')
 const { options } = require('./reply')
+const Comments = require('./comments')
 class Article extends Model {}
 Article.init(
   {
@@ -66,5 +67,9 @@ Article.init(
 )
 // console.log(Article === sequelize.models.Article)
 Article.hasMany(Comment)
-Comment.belongsTo(Article)
+Article.hasMany(Comments, {
+  foreignKey:'articleId'
+})
+Comments.belongsTo(Article)
+// Comment.belongsTo(Article)
 module.exports = Article

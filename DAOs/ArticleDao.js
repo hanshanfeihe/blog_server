@@ -25,10 +25,6 @@ function findArticle (req,res) {
     include: [
       { model: Sort, attributes: ['sort_name'] },
       { model: Tag, attributes: ['tag_id', 'tag_name'] },
-      {
-        model: Comment,
-        attributes: ['content', 'createdAt']
-      }
       ],
        limit:count,
        offset:(currentPage-1)*count
@@ -58,10 +54,6 @@ function findArticle (req,res) {
     include: [
       { model: Sort, attributes: ['sort_name'] },
       { model: Tag, attributes: ['tag_id', 'tag_name'] },
-      {
-        model: Comment,
-        attributes: ['content', 'createdAt']
-      }
       ],
   })
     .then((article) => {
@@ -200,10 +192,6 @@ function findSortArticle (req, res) {
         sort_id:req.query.sort_id
       } },
       { model: Tag, attributes: ['tag_id', 'tag_name'] },
-      {
-        model: Comment,
-        attributes: ['content', 'createdAt']
-      }
       ],
   
   })
@@ -236,10 +224,6 @@ function findSortArticle (req, res) {
       { model: Sort, attributes: ['sort_name'] },
       {
         model: Tag, attributes: ['tag_id', 'tag_name'] },
-      {
-        model: Comment,
-        attributes: ['content', 'createdAt']
-      }
       ],
   })
     .then((article) => {
@@ -345,10 +329,6 @@ function gettagarticle (req, res) {
         model: Tag, attributes: ['tag_id', 'tag_name'], where: {
         tag_name:req.query.tag_name
       } },
-      {
-        model: Comment,
-        attributes: ['content', 'createdAt']
-      }
       ],
        limit:count,
        offset:(currentPage-1)*count
@@ -381,10 +361,6 @@ function gettagarticle (req, res) {
         model: Tag, attributes: ['tag_id', 'tag_name'],where: {
         tag_name:req.query.tag_name
       }  },
-      {
-        model: Comment,
-        attributes: ['content', 'createdAt']
-      }
       ],
   })
     .then((article) => {
@@ -424,23 +400,6 @@ function gettagarticle (req, res) {
     include: [
       Sort,
       { model: Tag, attributes: ['tag_id', 'tag_name'] },
-      {
-        model: Comment,
-        include: [
-          {
-            model: Visitor
-          },
-          {
-            model: Reply,
-            include: [
-              { model: Visitor, as: 'from' },
-              { model: Visitor, as: 'to' }
-              // where:''
-            ]
-          }
-        ],
-        attributes: ['comment_id', 'content', 'createdAt']
-      }
     ]
   })
     .then((article) => {
