@@ -247,7 +247,6 @@ function findSortArticle (req, res) {
       })
     })
   }
- 
 }
 //新增文章
 function insertArticle(article, res) {
@@ -462,7 +461,33 @@ function updateArticle (articleForm, res) {
        })
       })
 }
-
+/**
+ * 获取博客列表
+ */
+function getBlogList (res) {
+  Article.findAll(
+    {
+      attributes:['title','id']
+    }
+  ).then(data => {
+    res.send({
+      data: data,
+      meta: {
+        status: 200,
+        msg:'请求成功'
+      }
+    })
+  }).catch(error => {
+    console.log(error);
+    res.send({
+      data: null,
+      meta: {
+        status: 500,
+        msg:'请求失败'
+      }
+    })
+  })
+}
 module.exports = {
   findArticle,
   getNewArticle,
@@ -473,5 +498,6 @@ module.exports = {
   findSortArticle,
   gettagarticle,
   getYearMonth,
-  getDateArticle
+  getDateArticle,
+  getBlogList
 }

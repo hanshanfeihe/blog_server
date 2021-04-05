@@ -46,4 +46,8 @@ router.put('/updatearticle',Jwt.checkToken,(req, res, next) => {
   console.log('更新文章')
   articleDao.updateArticle(req.body, res)
 })
+router.get('/getbloglist', (req, res, next) => {
+  console.log('获取所有页面标题和id');
+  articleDao.getBlogList(res)
+})
 module.exports = router

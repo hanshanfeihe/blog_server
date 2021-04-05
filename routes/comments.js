@@ -13,4 +13,8 @@ router.get('/getallcomments', (req, res, next) => {
   console.log('获取所有评论')
   commentsDao.getAllComment(req, res)
 })
+router.delete('/deletecommentsbyid', (req, res, next) => {
+  console.log('通过id删除评论')
+  commentsDao.deleteCommentById(req, res)
+})
 module.exports = router
