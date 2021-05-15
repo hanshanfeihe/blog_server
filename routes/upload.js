@@ -43,7 +43,7 @@ router.post('/uploadimg', upload.single('file'), (req, res) => {
         data: {
           originPath: imgURL,
           imgPath: '/uploads/contentImges' + filename,
-          url: 'http://127.0.0.1:3000/uploads/contentImges/' + filename
+          url: 'http://112.74.42.154:3000/uploads/contentImges/' + filename
         },
         meta: {
           status: 200,
@@ -84,7 +84,7 @@ router.post('/uploadimg', upload.single('file'), (req, res) => {
           console.log(1)
           data.data.imgPath = '/uploads/images/' + filename
           data.data.filename = filename
-          data.data.url = 'http://127.0.0.1:3000/uploads/images/' + filename
+          data.data.url = 'http://112.74.42.154:3000/uploads/images/' + filename
           data.meta.msg = '上传成功'
           data.meta.status = 200
           res.status(200).send(data)

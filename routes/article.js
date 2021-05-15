@@ -6,7 +6,7 @@ var Jwt = require('../controller/JWT')
  * 新增文章
  */
 router.post('/insertarticle',Jwt.checkToken, (req, res, next) => {
-  console.log('我被请求了')
+  console.log('新增文章')
   articleDao.insertArticle(req.body, res)
   // res.send('ok')
 })

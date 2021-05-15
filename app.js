@@ -31,7 +31,7 @@ app.all('*', function (request, response, next) {
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
-
+app.use(express.static('public'))
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -45,11 +45,11 @@ app.use('/upload', uploadRouter)
 app.use('/sort', sortRouter)
 app.use('/tag', tagRouter)
 app.use('/comment', commentRouter)
-app.use('/comments',commentsRouter)
+app.use('/comments', commentsRouter)
 app.use('/visitor', visitorRouter)
 app.use('/reply', replyRouter)
 app.use('/admin', adminRouter)
-app.use('/aboutinfo',aboutInfoRouter)
+app.use('/aboutinfo', aboutInfoRouter)
 app.get('/uploads/*', (req, res) => {
   console.log(__dirname + '/' + req.url)
   fs.readFile(__dirname + '/' + req.url, (err, data) => {

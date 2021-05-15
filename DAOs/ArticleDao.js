@@ -2,7 +2,7 @@ const ArticleTag = require('../models/acticleTag')
 const Article = require('../models/article')
 const Sort = require('../models/sort')
 const Tag = require('../models/tag')
-const Comment = require('../models/comment')
+const Comments = require('../models/comments')
 const Visitor = require('../models/visitor')
 const Reply = require('../models/reply')
 const { Sequelize } = require('../db')
@@ -25,6 +25,7 @@ function findArticle (req,res) {
     include: [
       { model: Sort, attributes: ['sort_name'] },
       { model: Tag, attributes: ['tag_id', 'tag_name'] },
+      {model:Comments}
       ],
        limit:count,
        offset:(currentPage-1)*count
@@ -53,7 +54,8 @@ function findArticle (req,res) {
      Article.findAll({
     include: [
       { model: Sort, attributes: ['sort_name'] },
-      { model: Tag, attributes: ['tag_id', 'tag_name'] },
+         { model: Tag, attributes: ['tag_id', 'tag_name'] },
+       {model:Comments}
       ],
   })
     .then((article) => {
@@ -86,7 +88,7 @@ function getNewArticle (req, res) {
     include: [
       { model: Sort, attributes: ['sort_name'] },
     ],
-    order: ['create_time'],
+    order: [['create_time','DESC']],
     limit:5
   })
     .then((article) => {
@@ -489,15 +491,15 @@ function getBlogList (res) {
   })
 }
 module.exports = {
-  findArticle,
-  getNewArticle,
-  insertArticle,
-  deleteArticle,
-  findArticleById,
-  updateArticle,
-  findSortArticle,
-  gettagarticle,
-  getYearMonth,
-  getDateArticle,
-  getBlogList
+  findArticle, //查找文章
+  getNewArticle, //获取最新文章
+  insertArticle, //新增文章
+  deleteArticle, // 删除文章
+  findArticleById, //根据id获取文章详情
+  updateArticle, //更新文章
+  findSortArticle, //按分类查找文章
+  gettagarticle,  //按标签显示对应文章
+  getYearMonth,  //获取文章日期
+  getDateArticle, //文章归档
+  getBlogList //所有文章列表
 }
