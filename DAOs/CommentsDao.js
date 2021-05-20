@@ -1,6 +1,39 @@
 const Comments = require('../models/comments')
 const Visitor = require('../models/visitor')
 const Article = require('../models/article')
+// 引入 nodemailer
+var nodemailer = require('nodemailer');
+// 创建一个SMTP客户端配置
+var config = {
+    host: 'smtp.qq.com',//网易163邮箱 smtp.163.com
+    port: 465,//网易邮箱端口 25
+    auth: {
+        user: '1372659241@qq.com', //邮箱账号
+        pass: 'rbgbjuqggeufifaf'  //邮箱的授权码
+    }
+};
+// 发送邮件
+function send(mail){
+    transporter.sendMail(mail, function(error, info){
+        if(error) {
+            return console.log(error);
+        }
+        console.log('mail sent:', info.response);
+    });
+};
+// 创建一个邮件对象
+var mail = {
+    // 发件人
+    from: 'xyk<1372659241@qq.com>',
+    // 主题
+    subject: '评论回复',
+    // 收件人
+    to: '',
+    // 邮件内容，HTML格式
+    text: '评论回复' //可以是链接，也可以是验证码
+};
+// 创建一个SMTP客户端对象
+var transporter = nodemailer.createTransport(config);
 /**
  * 新增评论
  */
